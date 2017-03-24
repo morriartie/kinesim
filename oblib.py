@@ -35,6 +35,7 @@ class Ship():
 		## forward
 		self.throttle = 0	
 		self.engine_power = 30 # N 
+		self.engine_weight = 1 # Kg
 		## left	front
 		self.left_f_throttle = [0]
 		self.left_f_engine_power = [5] # N			
