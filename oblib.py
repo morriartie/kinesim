@@ -1,3 +1,4 @@
+from time import sleep
 from math import sin
 from math import cos
 from math import pi as PI
@@ -23,6 +24,8 @@ class Ship():
 		self.speed_y = 0 # m/s
 		self.acc_x = 0 # m/s^2
 		self.acc_y = 0 # m/s^2
+		self.res_speed = 0
+		self.res_acc = 0
 		#		
 		self.moment_of_inertia = (1/3.0)*self.mass*(self.ship_length**2)		
 		self.orientation = 0 # *pi
@@ -109,10 +112,12 @@ class Ship():
 	# calcs ################################
 	def update_acc(self):
 		acc = self.engine_power*(self.throttle/100.0)/self.mass	
+		self.res_acc = acc
 		self.acc_x += acc*cos(self.orientation*PI)
 		self.acc_y += acc*sin(self.orientation*PI)
 
 	def update_speed(self):  
+		self.res_speed += self.res_acc
 		self.speed_x += self.acc_x
 		self.speed_y += self.acc_y				
 
@@ -169,20 +174,22 @@ class Ship():
 		print("pos:")
 		print("x: "+str(self.pos_x)+" y: "+str(self.pos_y))
 		print("speed:")
+		print("res: "+str(self.res_speed)+" m/s")
 		print("x: "+str(self.speed_x)+" m/s |y: "+str(self.speed_y)+" m/s")
 		print("acceleration:")
-		print("x: "+str(self.acc_x)+" m/s^2 |y: "+str(self.acc_y)+" m/s^2")
+		print("res: "+str(self.res_acc)+" m/s²")		
+		print("x: "+str(self.acc_x)+" m/s² |y: "+str(self.acc_y)+" m/s²")
 	
 	def show_engines(self):
 		print("Engines: ")
-		print("L main: ")
+		print(" L main: ")
 		# for i in range (...)
 		print("    index: 1")
 		print("    throttle: "+str(self.throttle)+"%")
 		print("    force: "+str((self.throttle/100.0)*self.engine_power)+"N")
 		print("    max force: "+str(self.engine_power)+"N")
 		#
-		print("L front:")
+		print(" L front:")
 		print("    L left:")
 		for i in range(len(self.left_f_engine_power)):
 			throttle = self.left_f_throttle[i]
@@ -207,7 +214,7 @@ class Ship():
 			print("        force: "+str(force)+"N")
 			print("        max force: "+str(max_force)+"N")
 			print("        ---")					
-		print("L back:")
+		print(" L back:")
 		print("    L left:")
 		for i in range(len(self.left_b_engine_power)):
 			throttle = self.left_b_throttle[i]
@@ -272,3 +279,9 @@ def show_positions():
 		x = int(s.pos_x)
 		y = int(s.pos_y)
 		print("("+str(s.orientation)+"pi,"+str(x)+","+str(y)+")["+str(s.ship_id)+":"+s.alias+"]")
+
+def show_live(interval):
+	while(True):
+		show_positions()
+		pass_time(interval)
+		sleep(interval)
