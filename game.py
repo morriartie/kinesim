@@ -104,11 +104,33 @@ def create_ship():
 	ship.engine_power = part2[0]
 	ship.engine_weight = part2[1]
 	# lu
+	ship.left_f_engine_power = []
+	ship.left_f_eng_dist_from_cm = []	
 	for i in range(len(left_up)):
+		ship.left_f_engine_power.append(left_up[i][1])
+		ship.left_f_eng_dist_from_cm.append(left_up[i][0])	
 	# ru
- 	for i in range(len(right_up)):
+ 	ship.right_f_engine_power = []
+	ship.right_f_eng_dist_from_cm = []	
+	for i in range(len(right_up)):
+		ship.right_f_engine_power.append(right_up[i][1])
+		ship.right_f_eng_dist_from_cm.append(right_up[i][0])		
 	# ld
+	ship.left_b_engine_power = []
+	ship.left_b_eng_dist_from_cm = []	
 	for i in range(len(left_down)):
+		ship.left_b_engine_power.append(left_down[i][1])
+		ship.left_b_eng_dist_from_cm.append(left_down[i][0])	
 	# rd
+	ship.right_b_engine_power = []
+	ship.right_b_eng_dist_from_cm = []	
 	for i in range(len(right_down)):
-	
+		ship.right_b_engine_power.append(right_down[1])
+		ship.right_b_eng_dist_from_cm.append(right_down[0])	
+	# spawn
+	ship.pos_x = posx
+	ship.pos_y = posy
+	ship.orientation = orientation
+
+
+
