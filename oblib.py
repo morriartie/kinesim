@@ -10,6 +10,7 @@ class Ship():
 		# info	########################	
 		self.ship_id = Ship.ship_count
 		self.alias = str(alias)
+		self.owner = None		
 		# structure ####################
 		self.ship_length = length # m
 		self.total_volume = volume # m3
