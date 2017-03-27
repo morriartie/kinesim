@@ -79,6 +79,31 @@ def load_serv():
 	s.bind(('',port))
 	print("tcp server started")
 
+def isValid():
+	valid = False
+	while not(valid):	
+		sendm("user: ")
+		user = recvm()
+		for i in range(len(ship_by_user)):
+			if(str(user)==str(ship_by_user[i][0])):
+				sendm("hello "+str(user))	
+				valid = True
+		if not(valid):
+			sendm("invalid user")
+	return valid
+
+def commListen():
+	sendm("command: ")	
+	data = recvm()
+#	if not data:
+#		break
+	print("received: "+str(data)+'\n')
+	isCommand, outp = command(str(data))
+	if(isCommand):
+		sendm(outp)
+	else:
+		sendm("invalid command")
+
 def Server():
 	global s
 	global c
@@ -92,30 +117,13 @@ def Server():
 	c, addr = s.accept()
 	print("Connection from: "+str(addr))
 	# validation
-	denied = True
-	while(denied):	
-		sendm("user: ")
-		user = recvm()
-		for i in range(len(ship_by_user)):
-			if(str(user)==str(ship_by_user[i][0])):
-				sendm("hello "+str(user))	
-				denied = False
-		if(denied):
-			sendm("invalid user")
-	# main process	
-	while True:
-		sendm("command: ")	
-		data = recvm()
-		if not data:
-			break
-		print("received: "+str(data)+'\n')
-		isCommand, outp = command(str(data))
-		if(isCommand):
-			sendm(outp)
-		else:
-			sendm("invalid command")
-	c.close()
-
+	if(isValid()):
+		# main process	
+		while(True):
+			commListen()
+		c.close()
+	else:
+		print("error 2324")
 
 
 
