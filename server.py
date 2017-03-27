@@ -10,6 +10,9 @@ import game as ga
 commands = []
 ship_by_user = []
 online_list = []
+s = None
+c = None
+hp = None 
 
 def load_users_list():
 	global ship_by_user
@@ -57,44 +60,60 @@ def exec_command(command):
 		return out
 
 ################################################
-def Server():
-	load_comm_list()
-	load_users_list()
-	#
+def sendm(message):
+	c.sendto(message.encode(),hp)
+
+def recvm():
+	out = c.recv(1024)
+	out = out.decode("UTF-8")
+	return out
+
+def load_serv():
+	global c
+	global hp
+	global s
 	host = 'localhost'
 	port = 5001
 	hp = (host,port)
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	s.bind(('',port))
 	print("tcp server started")
+
+def Server():
+	global s
+	global c
+	global hp
+	#	
+	load_comm_list()
+	load_users_list()
+	load_serv()
+	#
 	s.listen(1)
 	c, addr = s.accept()
 	print("Connection from: "+str(addr))
 	# validation
 	denied = True
 	while(denied):	
-		c.sendto("user: ".encode(),hp)
-		user = c.recv(1024)
-		user = user.decode("UTF-8")
+		sendm("user: ")
+		user = recvm()
 		for i in range(len(ship_by_user)):
 			if(str(user)==str(ship_by_user[i][0])):
-				c.sendto(("hello "+str(user)).encode(),hp)	
+				sendm("hello "+str(user))	
 				denied = False
 		if(denied):
-			c.sendto(("invalid user").encode(),hp)
+			sendm("invalid user")
 	# main process	
 	while True:
-		c.sendto(("command: ").encode(),hp)	
-		data = c.recv(1024)
+		sendm("command: ")	
+		data = recvm()
 		if not data:
 			break
-		data = data.decode("UTF-8")
 		print("received: "+str(data)+'\n')
 		isCommand, outp = command(str(data))
 		if(isCommand):
-			c.sendto(outp.encode(),hp)
+			sendm(outp)
 		else:
-			c.sendto(("invalid command").encode(),hp)
+			sendm("invalid command")
 	c.close()
 
 
