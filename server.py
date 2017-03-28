@@ -6,9 +6,14 @@ from time import sleep
 from random import randint
 import oblib as ob
 import game as ga
+import sqlite3
+
+dbname = "world.db"
+database = None
+dbcursor = None
+con = None
 
 commands = []
-ship_by_user = []
 online_list = []
 
 ships = []
@@ -23,12 +28,13 @@ t = ob.Ship("mrrt",1000,10,100)
 t.owner = 'moriartie'
 # fim teste
 
-def load_users_list():
-	global ship_by_user
-	ship_by_user = []
-	lis = open("userlist").read().split('\n')
-	for i in range(len(lis)):
-		ship_by_user.append(lis[i].split(','))
+def load_db():
+	global dbname
+	global database
+	global con
+	global dbcursor
+	con = sqlite3.connect(dbname)
+	dbcursor = con.cursor()
 
 def load_comm_list():
 	global commands	
@@ -43,46 +49,50 @@ def command(comm):
 		return (False,'')
 
 def exec_command(command):
-	s = ships[len(ships)-1]	
-	if(command=="status"):
-		sendm("orientation: "+str(s.orientation)+'\n')  
-		sendm("speed: "+str(s.res_speed)+'\n')
-		sendm("acceleration: "+str(s.res_acc)+'\n')
-		sendm("pos x: "+str(s.pos_x)+'\n')
-		sendm("pos y: "+str(s.pos_y)+'\n')
-		sendm("throttle: "+str(s.throttle)+'\n')
-
-	elif(command=="engines"):
-		sendm("engines")
-
+	if(command=="set-throttle-ul"):
+		pass
+	elif(command=="set-throttle-ur"):
+		pass
+	elif(command=="set-throttle-dl"):
+		pass
+	elif(command=="set-throttle-dr"):
+		pass
+	elif(command=="set-throttle"):
+		pass
+	elif(command=="get-throttle-ul"):
+		pass
+	elif(command=="get-throttle-ur"):
+		pass
+	elif(command=="get-throttle-dl"):
+		pass
+	elif(command=="get-throttle-dr"):
+		pass
+	elif(command=="get-throttle"):
+		pass
+	elif(command=="get-speed"):
+		pass
+	elif(command=="get-speed-x"):
+		pass
+	elif(command=="get-speed-y"):
+		pass
+	elif(command=="get-acc"):
+		pass
+	elif(command=="get-acc-x"):
+		pass
+	elif(command=="get-acc-y"):
+		pass
+	elif(command=="get-pos-x"):
+		pass
+	elif(command=="get-pos-y"):
+		pass
+	elif(command=="get-orientation"):
+		pass
+	elif(command=="get-ang-speed"):
+		pass
+	elif(command=="get-ang-acc"):
+		pass
 	elif(command=="scan"):
-		sendm("scan")
-
-	elif(command=="throttle"):
-		sendm("throttle: ")
-		tr = recvm()
-		s.throttle = int(tr)	
-		sendm("throttle set to "+str(tr)+'\n')	
-
-	elif(command=="throttle_ul"):
-		sendm("ul")
-
-	elif(command=="throttle_ur"):
-		sendm("ur")
-
-	elif(command=="throttle_dl"):
-		sendm("dl")
-
-	elif(command=="throttle_dr"):
-		sendm("dr")
-
-	elif(command=="create ship"):
-		sendm("createship")		
-
-	elif(command=="passtime"):
-		sendm("passed 1 s"+'\n')
-		ob.pass_time(1)
-
+		pass
 	elif(command=="exit"):	
 		sendm("disconnecting...")
 		c.close()		
@@ -127,20 +137,22 @@ def isValid():
 	while not(valid):	
 		sendm("user: ")
 		user = recvm()
-		for i in range(len(ship_by_user)):
-			if(str(user)==str(ship_by_user[i][0])):
-				#sendm("pass: ")
-				sleep(1/30.0)
-				sendm("hello "+str(user))	
-				sleep(1/30.0)
-				valid = True
+		sendm("pass: ")
+		passw = recvm()
+		llist = open("userlist").read().split('\n')
+		llist = [w for w in llist if w != '']		
+		user_pass_list = []
+		for i in range(len(llist)):
+			u = llist[i].split(',')[0]
+			p = llist[i].split(',')[1]
+			user_pass_list.append([u,p])		
+		for i in range(len(user_pass_list)):
+			if(str(user)==user_pass_list[i][0] and str(passw)==user_pass_list[i][1]):
+				sendm("hello, "+str(user))
+				valid = True			
 		if not(valid):
-			sendm("invalid user")
-	if(valid):
-		ship_own(user)
-		print("ship l size: "+str(len(ships)))
-		print("nome: "+str(ships[len(ships)-1].owner))	
-		return valid	
+			sendm("invalid user or password")
+	return valid	
 
 def commListen():
 	sendm("command: ")	
@@ -160,8 +172,8 @@ def Server():
 	global hp
 	#	
 	load_comm_list()
-	load_users_list()
 	load_serv()
+	load_db()
 	#
 	s.listen(1)
 	c, addr = s.accept()
