@@ -14,10 +14,12 @@ dbcursor = None
 con = None
 
 commands = []
-online_list = []
+online_user = None
 
 ships = []
 owners = []
+
+
 
 s = None
 c = None
@@ -49,6 +51,9 @@ def command(comm):
 		return (False,'')
 
 def exec_command(command):
+	global dbcursor
+	global con
+	global online_user	
 	if(command=="set-throttle-ul"):
 		pass
 	elif(command=="set-throttle-ur"):
@@ -58,41 +63,127 @@ def exec_command(command):
 	elif(command=="set-throttle-dr"):
 		pass
 	elif(command=="set-throttle"):
-		pass
+		sendm("throttle: ")
+		inp = recvm()
+		select="UPDATE Ships SET Throttle=%s WHERE Owner='%s'"%(str(inp),str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+
 	elif(command=="get-throttle-ul"):
-		pass
+		select="SELECT LF_Throttle FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-throttle-ur"):
-		pass
+		select="SELECT RF_Throttle FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-throttle-dl"):
-		pass
+		select="SELECT LB_Throttle FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-throttle-dr"):
-		pass
+		select="SELECT RB_Throttle FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-throttle"):
-		pass
+		select="SELECT Throttle FROM Ships WHERE Owner='%s'"%(str(online_user))		
+		dbcursor.execute()
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-speed"):
-		pass
+		select="SELECT Res_Speed FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-speed-x"):
-		pass
+		select="SELECT Speed_X FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-speed-y"):
-		pass
+		select="SELECT Speed_Y FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-acc"):
-		pass
+		select="SELECT Res_Acc FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-acc-x"):
-		pass
+		select="SELECT Acc_X FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-acc-y"):
-		pass
+		select="SELECT Acc_Y FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-pos-x"):
-		pass
+		select="SELECT Pos_X FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-pos-y"):
-		pass
+		select="SELECT Pos_Y FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-orientation"):
-		pass
+		select="SELECT Orientation FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-ang-speed"):
-		pass
+		select="SELECT Ang_Speed FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="get-ang-acc"):
-		pass
+		select="SELECT Ang_Acc FROM Ships WHERE Owner = '%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		sendm(str(data[0]))
+
 	elif(command=="scan"):
 		pass
+
 	elif(command=="exit"):	
 		sendm("disconnecting...")
 		c.close()		
@@ -131,6 +222,7 @@ def ship_own(owner):
 		return None	
 
 def isValid():
+	global online_user
 	global ships
 	global owners
 	valid = False
@@ -149,7 +241,8 @@ def isValid():
 		for i in range(len(user_pass_list)):
 			if(str(user)==user_pass_list[i][0] and str(passw)==user_pass_list[i][1]):
 				sendm("hello, "+str(user))
-				valid = True			
+				valid = True
+				online_user = str(user)			
 		if not(valid):
 			sendm("invalid user or password")
 	return valid	
