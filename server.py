@@ -4,8 +4,6 @@ import sys
 import socket
 from time import sleep
 from random import randint
-import oblib as ob
-import game as ga
 import sqlite3
 
 dbname = "world.db"
@@ -24,11 +22,6 @@ owners = []
 s = None
 c = None
 hp = None 
-
-# teste
-t = ob.Ship("mrrt",1000,10,100)
-t.owner = 'moriartie'
-# fim teste
 
 def load_db():
 	global dbname
@@ -99,7 +92,7 @@ def exec_command(command):
 
 	elif(command=="get-throttle"):
 		select="SELECT Throttle FROM Ships WHERE Owner='%s'"%(str(online_user))		
-		dbcursor.execute()
+		dbcursor.execute(select)
 		con.commit()
 		data = dbcursor.fetchone()
 		sendm(str(data[0]))
