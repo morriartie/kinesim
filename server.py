@@ -48,13 +48,33 @@ def exec_command(command):
 	global con
 	global online_user	
 	if(command=="set-throttle-ul"):
-		pass
+		sendm("indexes: ")
+		inds = recvm()
+		inds = str(inds).split(',')
+		sendm("values(%s): "%len(inds))
+		vals = recvm()
+		#
 	elif(command=="set-throttle-ur"):
-		pass
+		sendm("indexes: ")
+		inds = recvm()
+		inds = str(inds).split(',')
+		sendm("values(%s): "%len(inds))
+		vals = recvm()
+		#
 	elif(command=="set-throttle-dl"):
-		pass
+		sendm("indexes: ")
+		inds = recvm()
+		inds = str(inds).split(',')
+		sendm("values(%s): "%len(inds))
+		vals = recvm()
+		#
 	elif(command=="set-throttle-dr"):
-		pass
+		sendm("indexes: ")
+		inds = recvm()
+		inds = str(inds).split(',')
+		sendm("values(%s): "%len(inds))
+		vals = recvm()
+		#
 	elif(command=="set-throttle"):
 		sendm("throttle: ")
 		inp = recvm()
