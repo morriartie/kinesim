@@ -32,8 +32,11 @@ def load_db():
 	dbcursor = con.cursor()
 
 def load_comm_list():
-	global commands	
+	global commands
 	commands = open("commandlist").read().split('\n')
+
+def order(vec,ref):
+	return [x for (x,y) in sorted(zip(vec,ref))]
 
 ################################################
 def command(comm):
@@ -47,34 +50,98 @@ def exec_command(command):
 	global dbcursor
 	global con
 	global online_user	
+	# up left	
 	if(command=="set-throttle-ul"):
-		sendm("indexes: ")
+		colname = "LF_Throttle"
+		sendm("index: ")
 		inds = recvm()
-		inds = str(inds).split(',')
-		sendm("values(%s): "%len(inds))
+		inds = str(int(inds))
+		sendm("value: ")
 		vals = recvm()
-		#
+		# getting values
+		select = "SELECT %s FROM Ships WHERE Owner='%s'"%(colname,str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		# updating value
+		values = str(data[0]).split(',')
+		for i in range(len(values)):
+			if(i==inds):
+				values[i] = vals		
+		# setting values
+		values = ','.join(values)
+		select = "UPDATE Ships SET %s=%s WHERE Owner='%s'"%(colname,values,str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+	# up right	
 	elif(command=="set-throttle-ur"):
-		sendm("indexes: ")
+		colname = "RF_Throttle"
+		sendm("index: ")
 		inds = recvm()
-		inds = str(inds).split(',')
-		sendm("values(%s): "%len(inds))
+		inds = str(int(inds))
+		sendm("value: ")
 		vals = recvm()
-		#
+		# getting values
+		select = "SELECT %s FROM Ships WHERE Owner='%s'"%(colname,str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		# updating value
+		values = str(data[0]).split(',')
+		for i in range(len(values)):
+			if(i==inds):
+				values[i] = vals		
+		# setting values
+		values = ','.join(values)
+		select = "UPDATE Ships SET %s=%s WHERE Owner='%s'"%(colname,values,str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+	# down left	
 	elif(command=="set-throttle-dl"):
-		sendm("indexes: ")
+		colname = "LB_Throttle"
+		sendm("index: ")
 		inds = recvm()
-		inds = str(inds).split(',')
-		sendm("values(%s): "%len(inds))
+		inds = str(int(inds))
+		sendm("value: ")
 		vals = recvm()
-		#
+		# getting values
+		select = "SELECT %s FROM Ships WHERE Owner='%s'"%(colname,str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		# updating value
+		values = str(data[0]).split(',')
+		for i in range(len(values)):
+			if(i==inds):
+				values[i] = vals		
+		# setting values
+		values = ','.join(values)
+		select = "UPDATE Ships SET %s=%s WHERE Owner='%s'"%(colname,values,str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+	# down right	
 	elif(command=="set-throttle-dr"):
-		sendm("indexes: ")
+		colname = "RB_Throttle"
+		sendm("index: ")
 		inds = recvm()
-		inds = str(inds).split(',')
-		sendm("values(%s): "%len(inds))
+		inds = str(int(inds))
+		sendm("value: ")
 		vals = recvm()
-		#
+		# getting values
+		select = "SELECT %s FROM Ships WHERE Owner='%s'"%(colname,str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		# updating value
+		values = str(data[0]).split(',')
+		for i in range(len(values)):
+			if(i==inds):
+				values[i] = vals		
+		# setting values
+		values = ','.join(values)
+		select = "UPDATE Ships SET %s=%s WHERE Owner='%s'"%(colname,values,str(online_user))
+		dbcursor.execute(select)
+		con.commit()
 	elif(command=="set-throttle"):
 		sendm("throttle: ")
 		inp = recvm()
