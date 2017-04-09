@@ -262,12 +262,47 @@ def exec_command(command):
 		sendm(str(data[0]))
 
 	elif(command=="scan"):
-		pass
+		# getting ship info
+		select="SELECT Pos_X,Pos_Y,Scan_Range FROM Ships WHERE Owner='%s'"%(str(online_user))
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		x,y,s_range = int(data[0]),int(data[1]),int(data[2])	
+		# getting number of ships
+		select = "SELECT count(*) FROM Ships"
+		dbcursor.execute(select)
+		con.commit()
+		data = dbcursor.fetchone()
+		nos = int(data[0])
+		# finding the ones in range
+		inrange = []		
+		for i in range(nos):
+			select = "SELECT Alias,Owner,Pos_X,Pos_Y FROM Ships WHERE Id=%d and Owner!='%s'"%(i,str(online_user))
+			dbcursor.execute(select)
+			con.commit()
+			data = dbcursor.fetchone()
+			if(data!=None):
+				alias,owner,posx,posy = data[0],data[1],data[2],data[3]		
+				isinrange,distance = inRange(x,y,posx,posy,s_range)			
+				if(isinrange):
+					li = [str(v) for v in [alias,owner,posx,posy,distance]]
+					li = ','.join(li)
+					inrange.append(li)
+		inrange = '\n'.join(inrange)
+		sendm(inrange)			
 
 	elif(command=="exit"):	
 		sendm("disconnecting...")
 		c.close()		
 
+
+
+def inRange(x,y,posx,posy,s_range):
+	d=(((float(x-posx))**2)+(float(y-posy)**2))**(1/2)
+	ret = False	
+	if(d<s_range):
+		ret = True	 
+	return ret,d
 ################################################
 def sendm(message):
 	c.sendto(message.encode(),hp)
